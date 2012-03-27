@@ -11,28 +11,15 @@ program_desc 'iBooks sorting collections'
 
 version 0.1
 
+
 desc 'Reverse ordering'
 switch [:r,:reverse]
 
-desc 'Sort by author'
-arg_name 'ibooks_db collection_id'
-command :author do |c|
-  c.action do |global_options,options,args|
-		error_handing args, c.usage
-		
-		fields = parse_subsort args[2..-1]
-		fields.unshift :author
-		
-		books = Books.new args[0]
-		books.sort_collection args[1].to_i, fields
-  end
-end
-
-desc 'List collections'
+desc 'List all collections with their ids'
 arg_name 'ibooks_db'
 command :list do |c|
   c.action do |global_options,options,args|
-		raise "Usage  #{c.usage}" unless args.length == 1
+		raise "Usage  #{c.usage}" unless args.length >=1
 		raise "File '#{args[0]}' does not exist." unless File.exists? args[0]	
 		
 		books = Books.new args[0]
@@ -40,6 +27,52 @@ command :list do |c|
 		
   end
 end
+
+desc 'Sort by Author (sort author)'
+arg_name short_help
+long_desc command_help
+command :author do |c|
+	c.action do |global_options,options,args|
+		preform_actions c, global_options,options,args
+	end
+end
+
+desc 'Sort by Author (actual author)'
+arg_name short_help
+long_desc command_help
+command :real_author do |c|
+	c.action do |global_options,options,args|
+		preform_actions c, global_options,options,args
+	end
+end
+
+desc 'Sort by Title'
+arg_name short_help
+long_desc command_help
+command :title do |c|
+	c.action do |global_options,options,args|
+		preform_actions c, global_options,options,args
+	end
+end
+
+desc 'Sort by Sort Title'
+arg_name short_help
+long_desc command_help
+command :sort_title do |c|
+	c.action do |global_options,options,args|
+		preform_actions c, global_options,options,args
+	end
+end
+
+desc 'Sort by Series'
+arg_name short_help
+long_desc command_help
+command :series do |c|
+	c.action do |global_options,options,args|
+		preform_actions c, global_options,options,args
+	end
+end
+
 
 on_error do |exception|
   # Error logic here

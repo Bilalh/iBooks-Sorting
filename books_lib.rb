@@ -1,8 +1,31 @@
 Mapping ={
-	:author     => "b.ZSORTAUTHOR",
-	:title      => "b.ZBOOKTITLE",
-	:sort_title => "b.ZSORTTITLE"
+	:author      => "b.ZSORTAUTHOR",
+	:real_author => "b.ZBOOKAUTHOR",
+	:title       => "b.ZBOOKTITLE",
+	:sort_title  => "b.ZSORTTITLE",
+	:series      => "b.ZGENRE",
 }
+
+def short_help
+	"books_db collection_id [extra sort fields]"
+end
+def command_help
+"""
+	Can use extra sort fields: #{Mapping.keys.join ", "}
+"""
+end
+
+def preform_actions(c,global_options,options,args)
+	error_handing args, c.usage
+	
+	fields = parse_subsort args[2..-1]
+	fields.unshift c.name
+	
+	reverse = global_options.has_key?(:reverse) ? global_options[:reverse] : false
+	
+	books = Books.new args[0]
+	books.sort_collection args[1].to_i, fields, reverse
+end
 
 def error_handing(args, usage,strict=false)
    if  (strict && args.length != 2) || args.length < 2
@@ -51,8 +74,8 @@ class Books
 		
 	end
 	
-	def sort_collection(collection_id, fields_arr)
-		puts "Sorting #{collection_id}, by #{fields_arr}"
+	def sort_collection(collection_id, fields_arr,reverse=false)
+		puts "Sorting #{collection_id}, by #{fields_arr} #{reverse}"
 		@db.results_as_hash = true
 		
 		
@@ -75,7 +98,9 @@ class Books
 		# Get the sort keys highest first
 		numbers  = results.collect do |e|
 			e['ZSORTKEY']
-		end.sort.reverse
+		end.sort
+		
+		numbers.reverse! if !reverse
 		
 		# pp numbers
 		
@@ -84,10 +109,10 @@ class Books
 			e['ZSORTKEY']= numbers[i]
 		end
 		
-		puts "Highest sortkey appears first"
+		puts "Highest sortkey appears first in iBooks"
 		results.each do |e|
-			puts "%10d %-25s %s" % [e['ZSORTKEY'], e['ZSORTAUTHOR'], e['ZSORTTITLE']]
-			puts "%10d %-25s %s" % [e['ZSORTKEY'], e['ZSORTAUTHOR'], e['ZBOOKTITLE']]
+			puts "%10s %-25s %s" % [e['ZSORTKEY'], e['ZSORTAUTHOR'], e['ZSORTTITLE']]
+			puts "%10s %-25s %s" % ["","", e['ZBOOKTITLE']]
 		end
 		
 		# Update
