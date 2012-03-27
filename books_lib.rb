@@ -1,3 +1,5 @@
+# Bilal Syed Hussain
+
 Mapping ={
 	:author      => "b.ZSORTAUTHOR",
 	:real_author => "b.ZBOOKAUTHOR",
@@ -72,6 +74,16 @@ class Books
 			puts " %2d %s" % e
 		end
 		
+	end
+	
+	def move_all_books(from, to)
+		puts "Moving all books from collection #{from} to collection #{to}"
+		query = <<-SQL
+			update ZBKCOLLECTIONMEMBER
+			set   ZCOLLECTION  = #{to}
+			where ZCOLLECTION  = #{from}
+		SQL
+		puts @db.execute query
 	end
 	
 	def sort_collection(collection_id, fields_arr,reverse=false)

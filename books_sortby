@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby19
+# Bilal Syed Hussain
+
 require 'rubygems'
 require 'gli'
 require "pp"
@@ -27,6 +29,28 @@ command :list do |c|
 		
   end
 end
+
+desc 'Moves all books from one collection to an another'
+arg_name 'ibooks_db from to'
+command :move do |c|
+  c.action do |global_options,options,args|
+		raise "Usage  #{c.usage}" unless args.length ==3
+		raise "File '#{args[0]}' does not exist." unless File.exists? args[0]	
+	
+		begin
+			Integer(args[1])
+			Integer(args[2])
+		rescue Exception => e
+			raise "ids have to INTEGERS"
+		end
+		
+		books = Books.new args[0]
+		books.move_all_books args[1], args[2]
+		
+		
+  end
+end
+
 
 desc 'Sort by Author (sort author)'
 arg_name short_help
