@@ -19,10 +19,12 @@ arg_name 'ibooks_db collection_id'
 command :author do |c|
   c.action do |global_options,options,args|
 		error_handing args, c.usage
-
-		books = Books.new args[0]
-		books.sort_collection args[1].to_i, :author
 		
+		fields = parse_subsort args[2..-1]
+		fields.unshift :author
+		
+		books = Books.new args[0]
+		books.sort_collection args[1].to_i, fields
   end
 end
 
