@@ -80,8 +80,8 @@ class Books
 		puts "Moving all books from collection #{from} to collection #{to}"
 		query = <<-SQL
 			update ZBKCOLLECTIONMEMBER
-			set   ZCOLLECTION  = #{to}
-			where ZCOLLECTION  = #{from}
+			set   ZCOLLECTION  = #{to.to_i}
+			where ZCOLLECTION  = #{from.to_i}
 		SQL
 		puts @db.execute query
 	end
