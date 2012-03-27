@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby19
+require 'rubygems'
+require 'gli'
+require "pp"
+require File.join(File.dirname(__FILE__), 'books_lib')
+# require_relative 'books_lib'  #1.9 only
+
+include GLI
+
+program_desc 'iBooks sorting collections'
+
+version 0.1
+
+desc 'Reverse ordering'
+switch [:r,:reverse]
+
+desc 'Sort by author'
+arg_name 'ibooks_db collection_id'
+command :author do |c|
+  c.action do |global_options,options,args|
+		error_handing args, c.usage
+
+		books = Books.new args[0]
+		books.sort_collection args[1].to_i, :author
+		
+  end
+end
+
+desc 'List collections'
+arg_name 'ibooks_db'
+command :list do |c|
+  c.action do |global_options,options,args|
+		raise "Usage  #{c.usage}" unless args.length == 1
+		raise "File '#{args[0]}' does not exist." unless File.exists? args[0]	
+		
+		books = Books.new args[0]
+		books.list_collections
+		
+  end
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+	# Post logic here
+	# Use skips_post before a command to skip this
+	# block on that command only
+	next if command.name == :help
+	
+	# case command.name
+	# when :author
+	# 	pp command
+	# end
+	
+end
+
+exit GLI.run(ARGV)
